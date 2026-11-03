@@ -1,0 +1,30 @@
+- Keep role membership in `user_roles`, not profiles or browser storage, because authorization must remain independently verifiable.
+- Keep temporary-password-required state in Auth's server-controlled `app_metadata`, because users must not clear the requirement themselves.
+- Verify a temporary password on the server before replacing it, because a pre-existing session alone should not bypass the forced password change.
+- Scope campaign reads to the Mestre or users with a character in that campaign, and show closed battle maps only to the Mestre, because sign-in alone must not expose another campaign.
+- Keep image buckets public for existing image links but do not grant direct object-listing reads, because known images must render without allowing file enumeration.
+- Store character technique origin separately from prerequisite flags, because Haki and Akuma seals describe the technique itself rather than its unlocking conditions.
+- Store per-use PF costs on abilities and show action seals as diamonds (complete 4, common 3, special top), ! for reaction, clocks for interlude, consistently across all ability views.
+- Keep legacy style-seal columns for existing records but hide the style-seal category and do not request or render it in abilities, because style seals are retired without deleting historical data.
+- Swap player sheets for Mestre-prepared "past" sheets by exchanging characters.user_id via set_past_mode(), because every screen and access rule already follows ownership and originals stay untouched.
+- Identify past sheets by characters.past_of_character_id and omit Identity, Abilities, Combat Deck, and Ship tabs only for those sheets, because the alternate experience is narrative while original sheets remain complete.
+- Persist night mode per map below tokens; keep active avatar URLs on `characters` and up to six pairs in `character_avatar_sets` for compatibility.
+- Store each character's optional battle deck background URL on `characters` and upload through the existing owned image bucket, so the decoration follows the sheet without exposing other characters' files.
+- Keep the Grand Line as a focused view over existing campaign-map coordinates, because saved islands must remain in place while the world backdrop stays out of that view.
+- Size campaign viewports independently of fixed world coordinates and animate only a pointer-transparent ocean texture with reduced-motion support, because presentation changes must preserve map positions and interactions.
+- Keep the Convés navigation presentation independent of access and past-sheet logic, because visual rearrangements must preserve permissions and sheet switching.
+- Keep master navigation collapsible and System as a catalog hub linking the existing NPC route, because layout changes must preserve all catalog editing and permissions.
+- Isolate each Mestre's data with a `master_id` column on every tenant table, set by the `set_master_id` trigger and enforced by the restrictive "Isolamento por Mestre" RLS policy (`master_id = ANY(my_realm_owners())`), because client-supplied ownership must never be trusted and a single policy covers all tables consistently.
+- Gate platform administration (roles, accounts, master overview) on the `super_admin` role in `user_roles` via `is_super_admin()`, because only the principal admin may grant or revoke Mestre.
+- Store global System option labels by stable keys in `system_option_labels`, allow authenticated reads and super-admin-only writes through RLS and authenticated server functions, because renaming navigation must not alter catalog identity or tenant permissions.
+- Reassign a character's child rows when its campaign changes through `cascade_character_master`, because players moving between Mestres must take their sheet data along.
+- Scope singleton/unique keys (active battle map, level thresholds, Haki assets, damage-type slugs) per master_id and auto-create a campaign when Mestre is granted, because a global key from one Mestre silently blocks another's inserts.
+- Coalesce concurrent verified profile loads per identity without retaining results, and guard stale completions, because startup and auth events must not duplicate requests or overwrite another session.
+- Keep shared icon and attribute registries in browser-safe data modules, because displaying a seal or label must not load a catalog editor.
+- Keep battle drag previews local to the dragged element and commit through the existing authorized mutation on release, because pointer movement must not rerender the complete grid.
+- Invalidate only legacy unkeyed campaign-dependent queries when selecting a campaign, because campaign-keyed queries already select the correct cache entry.
+- Export commercial bases through an authenticated super-admin function using explicit catalog/column allowlists and the caller's master_id; exclude identities, campaign instances, fruit ownership and file URLs, because independent customer copies must not carry the original owner's private data.
+- Store pixel-art scenes per campaign with layers as JSON and one active scene replacing the player battle map, because the stage is a presentation layer that must not alter battle data.
+- Store each Mestre's attribute/skill layout as JSON in `attribute_systems` (one row per master_id); extra attributes keep values in `characters.skills` under `attr:<key>` while the five base columns keep powering existing rules, because sheets must adapt per Mestre without schema changes.
+- Derive sheet radar vertices from the configured attribute count and keep named controls in a wrapping numbered legend, because arbitrary counts must not overlap labels or touch targets.
+- Validate cooperative special-role occupancy and participant references on persisted challenge data, because both direct Mestre saves and leader RPC assignments must enforce the same rules.
